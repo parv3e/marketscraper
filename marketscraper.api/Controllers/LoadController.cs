@@ -24,25 +24,13 @@ namespace marketscraper.api.Controllers
                     MarketOrders = new List<MarketOrder>()
                 };
 
-                for (var i = 0; i < 100; i++)
-                {
-                    load.MarketOrders.Add(new MarketOrder()
-                    {
-                        Duration = 1,
-                        IsBuyOrder = true,
-                        Issued = DateTime.Now,
-                        LocationId = 0,
-                        MinVolume = 0,
-                        OrderId = 0,
-                        Price = 0,
-                        Range = "System",
-                        SystemId = 0,
-                        LoadId = 0,
-                        TypeId = 0,
-                        VolumeRemain = 0,
-                        VolumeTotal = 0
-                    });
-                }
+                var json = new WebClient().DownloadString("https://esi.tech.ccp.is/latest/markets/10000002/orders/?page=1");
+
+                //var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+                //serializer.MaxJsonLength = Int32.MaxValue;
+                //var result = serializer.Deserialize<MarketOrder[]>(json);
+                var result = Newtonsoft.Json.JsonConvert.DeserializeObject<MarketOrder[]>(json);
+                load.MarketOrders.AddRange(result);
 
                 db.Loads.Add(load);
                 db.SaveChanges();
