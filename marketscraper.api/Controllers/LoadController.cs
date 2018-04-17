@@ -17,12 +17,18 @@ namespace marketscraper.api.Controllers
             using (var db = new ApiContext())
             {
                 //create new load
+
+
+
                 var load = new Load()
                 {
                     Created = DateTime.Now,
                     GUID = System.Guid.NewGuid().ToString(),
                     MarketOrders = new List<MarketOrder>()
                 };
+
+                db.LoadAudits.Add(new LoadAudit() {Load = load, Message = "Initializing load" });
+                db.SaveChanges();
 
                 var json = new WebClient().DownloadString("https://esi.tech.ccp.is/latest/markets/10000002/orders/?page=1");
 
@@ -33,6 +39,7 @@ namespace marketscraper.api.Controllers
                 load.MarketOrders.AddRange(result);
 
                 db.Loads.Add(load);
+                db.LoadAudits.Add(new LoadAudit() { Load = load, Message = "Completed load" });
                 db.SaveChanges();
 
                 return load;

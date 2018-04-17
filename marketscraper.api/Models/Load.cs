@@ -16,14 +16,26 @@ namespace marketscraper.api
         [Required]
         [JsonProperty(PropertyName = "load_id")]
         public int LoadId { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "guid")]
         public string GUID { get; set; }
         [Required]
+
         [JsonProperty(PropertyName = "created")]
         public DateTime Created { get; set; }
+
         [JsonProperty(PropertyName = "completed")]
         public DateTime? Completed { get; set; }
+
+        [NotMapped]
+        [JsonProperty(PropertyName = "has_completed")]
+        public bool HasCompleted {
+            get {
+                return this.Completed.HasValue;
+            }
+        }
+
         [Newtonsoft.Json.JsonIgnore]
         public virtual List<MarketOrder> MarketOrders { get; set; }
     }
