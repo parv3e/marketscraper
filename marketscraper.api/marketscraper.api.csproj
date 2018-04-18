@@ -113,7 +113,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Site.css" />
+    <Content Include="App_Data\DestroyDatabase.sql" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
     <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
@@ -142,11 +142,11 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\LoadAuditController.cs" />
     <Compile Include="Controllers\LoadController.cs" />
-    <Compile Include="Controllers\LoaderController.cs" />
     <Compile Include="Controllers\MarketOrderController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Loader.cs" />
     <Compile Include="Models\Load.cs" />
     <Compile Include="Models\LoadAudit.cs" />
     <Compile Include="Models\MarketOrder.cs" />
@@ -154,10 +154,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\web.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -166,10 +162,7 @@
     </None>
     <None Include="_bin_deployableAssemblies\amd64\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-    <Folder Include="Views\Loader\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

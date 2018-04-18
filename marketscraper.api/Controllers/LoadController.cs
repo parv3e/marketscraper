@@ -10,6 +10,8 @@ namespace marketscraper.api.Controllers
     public class LoadController : ApiController
     {
 
+        //Initializes new load and spawns new Loader thread which does the loading.
+        //Returns without waiting for the load to finish
         [HttpPost]
         [Route("api/load/create")]
         public Load Create([FromBody]string value)
@@ -18,8 +20,6 @@ namespace marketscraper.api.Controllers
             {
                 //create new load
 
-
-
                 var load = new Load()
                 {
                     Created = DateTime.Now,
@@ -27,20 +27,12 @@ namespace marketscraper.api.Controllers
                     MarketOrders = new List<MarketOrder>()
                 };
 
+                db.Loads.Add(load);
                 db.LoadAudits.Add(new LoadAudit() {Load = load, Message = "Initializing load" });
                 db.SaveChanges();
 
-                var json = new WebClient().DownloadString("https://esi.tech.ccp.is/latest/markets/10000002/orders/?page=1");
-
-                //var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-                //serializer.MaxJsonLength = Int32.MaxValue;
-                //var result = serializer.Deserialize<MarketOrder[]>(json);
-                var result = Newtonsoft.Json.JsonConvert.DeserializeObject<MarketOrder[]>(json);
-                load.MarketOrders.AddRange(result);
-
-                db.Loads.Add(load);
-                db.LoadAudits.Add(new LoadAudit() { Load = load, Message = "Completed load" });
-                db.SaveChanges();
+                System.Threading.Thread loaderThread = new System.Threading.Thread(() => Loader.LoadMarketOrders(load.LoadId));
+                loaderThread.Start();
 
                 return load;
 
