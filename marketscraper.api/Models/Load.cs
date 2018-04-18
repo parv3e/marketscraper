@@ -38,5 +38,8 @@ namespace marketscraper.api
 
         [Newtonsoft.Json.JsonIgnore]
         public virtual List<MarketOrder> MarketOrders { get; set; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        public virtual List<MarketType> MarketTypes { get; set; }
     }
 }

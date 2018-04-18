@@ -1,5 +1,5 @@
-﻿DROP TABLE [audit.Load];
-DROP TABLE [main.MarketOrder];
-DROP TABLE [main.Load];
+﻿DROP TABLE [Load];
+DROP TABLE [MarketOrder];
+DROP TABLE [Load];
 
 GO
