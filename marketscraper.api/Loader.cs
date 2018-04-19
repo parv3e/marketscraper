@@ -75,13 +75,48 @@ namespace marketscraper.api
                     fetchedTypeIds = Newtonsoft.Json.JsonConvert.DeserializeObject<int[]>(json);
                     allfetchedTypeIds.AddRange(fetchedTypeIds);
                     currentTypePage++;
-                    if (currentTypePage == 5) { break; }
                 } while (fetchedTypeIds.Length > 0);
 
                 var marketTypes = UniverseNameResolver.Resolve<MarketType>(allfetchedTypeIds.Distinct());
                 db.MarketTypes.AddRange(marketTypes);
                 db.SaveChanges();
             }
+        }
+
+        public static string UploadStringWithRetry(WebClient client, string url, string jsonIn)
+        {
+            for (var i = 0; i <= 10; i++)
+            {
+                try
+                {
+                    client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+                    var ret = client.UploadString($"https://esi.tech.ccp.is/latest/universe/names/", jsonIn);
+                    return ret;
+                }
+                catch (Exception)
+                {
+                    //don't care! LOL
+                }
+            }
+            throw new ApplicationException("Unable to upload JSON within 10 tries.");
+        }
+
+        public static string DownloadStringWithRetry(WebClient client, string url)
+        {
+            for (var i = 0; i <= 10; i++)
+            {
+                try
+                {
+                    client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+                    var ret = client.DownloadString(url);
+                    return ret;
+                }
+                catch (Exception)
+                {
+                    //don't care! LOL
+                }
+            }
+            throw new ApplicationException("Unable to download JSON within 10 tries.");
         }
 
 

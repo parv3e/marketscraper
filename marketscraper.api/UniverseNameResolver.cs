@@ -18,7 +18,7 @@ namespace marketscraper.api
             {
                 var idsToFetch = ids.Skip(i).Take(100);
                 var idsJsonArray = Newtonsoft.Json.JsonConvert.SerializeObject(idsToFetch);
-                var json = GetJsonWithRetry(client, idsJsonArray);
+                var json = Loader.UploadStringWithRetry(client, "https://esi.tech.ccp.is/latest/universe/names/", idsJsonArray);
                 result.AddRange(Newtonsoft.Json.JsonConvert.DeserializeObject<List<T>>(json));
                 System.Threading.Thread.Sleep(250);
             }
@@ -26,22 +26,5 @@ namespace marketscraper.api
             return result;
         }
 
-        private static string GetJsonWithRetry(WebClient client, string jsonIn)
-        {
-            for (var i = 0; i <= 10; i++)
-            {
-                try
-                {
-                    client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
-                    var ret = client.UploadString($"https://esi.tech.ccp.is/latest/universe/names/", jsonIn);
-                    return ret;
-                }
-                catch (Exception)
-                {
-                    //don't care!                    
-                }
-            }
-            throw new ApplicationException("Unable to fetch JSON within 10 tries.");
-        }
     }
 }
