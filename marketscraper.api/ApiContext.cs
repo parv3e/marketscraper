@@ -17,6 +17,8 @@ namespace marketscraper.api
         public DbSet<LoadAudit> LoadAudits { get; set; }
         public DbSet<MarketOrder> MarketOrders { get; set; }
         public DbSet<MarketType> MarketTypes { get; set; }
+        public DbSet<MarketSystem> MarketSystems { get; set; }
+        public DbSet<MarketLocation> MarketLocations { get; set; }
     }
 
 

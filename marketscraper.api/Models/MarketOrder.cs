@@ -13,6 +13,7 @@ namespace marketscraper.api
     public class MarketOrder
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
         [JsonProperty(PropertyName = "order_id")]
         public long OrderId { get; set; }

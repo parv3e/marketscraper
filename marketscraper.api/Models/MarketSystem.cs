@@ -12,6 +12,7 @@ namespace marketscraper.api
     public class MarketSystem
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
         [JsonProperty(PropertyName = "id")]
         public int MarketSystemId { get; set; }

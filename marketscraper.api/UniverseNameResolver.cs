@@ -10,17 +10,19 @@ namespace marketscraper.api
 {
     public class UniverseNameResolver
     {
+
+        
+
         public static List<T> Resolve<T>(IEnumerable<int> ids)
         {
             var result = new List<T>();
             var client = new WebClient();
-            for (var i = 0; i < ids.Count(); i += 100)
+            for (var i = 0; i < ids.Count(); i += 500)
             {
-                var idsToFetch = ids.Skip(i).Take(100);
+                var idsToFetch = ids.Skip(i).Take(500);
                 var idsJsonArray = Newtonsoft.Json.JsonConvert.SerializeObject(idsToFetch);
                 var json = Loader.UploadStringWithRetry(client, "https://esi.tech.ccp.is/latest/universe/names/", idsJsonArray);
                 result.AddRange(Newtonsoft.Json.JsonConvert.DeserializeObject<List<T>>(json));
-                System.Threading.Thread.Sleep(250);
             }
 
             return result;

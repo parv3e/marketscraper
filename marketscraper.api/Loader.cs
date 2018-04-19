@@ -20,9 +20,10 @@ namespace marketscraper.api
 
                 int currentOrderPage = 1;
                 MarketOrder[] fetchedOrders = new MarketOrder[0];
+                var cli = new WebClient();
                 do
                 {
-                    var json = new WebClient().DownloadString($"https://esi.tech.ccp.is/latest/markets/10000002/orders/?page={currentOrderPage.ToString()}");
+                    var json = Loader.DownloadStringWithRetry(cli, $"https://esi.tech.ccp.is/latest/markets/10000002/orders/?page={currentOrderPage.ToString()}");
                     fetchedOrders = Newtonsoft.Json.JsonConvert.DeserializeObject<MarketOrder[]>(json);
                     load.MarketOrders.AddRange(fetchedOrders);
                     db.LoadAudits.Add(new LoadAudit() { Load = load, Message = $"Fetched page {currentOrderPage} of Market Orders." });
@@ -64,6 +65,16 @@ namespace marketscraper.api
                 objCtx.ExecuteStoreCommand("DELETE FROM [MarketType]");
                 int currentTypePage = 1;
 
+                //create new web client
+                var cli = new WebClient();
+
+                //load systems
+                var systemsJson = Loader.DownloadStringWithRetry(cli, "https://esi.tech.ccp.is/latest/universe/systems");
+                var marketSystemIds = Newtonsoft.Json.JsonConvert.DeserializeObject<int[]>(systemsJson);
+                var marketSystems = UniverseNameResolver.Resolve<MarketSystem>(marketSystemIds);
+                db.MarketSystems.AddRange(marketSystems);
+                db.SaveChanges();
+
                 //load market types
                 //cannot guarantee here that ids will be either unique or distinct...
                 List<int> allfetchedTypeIds = new List<int>();
@@ -71,8 +82,8 @@ namespace marketscraper.api
                 do
                 {
                     System.Diagnostics.Debug.WriteLine($"Fetching market type page: {currentTypePage}");
-                    var json = new WebClient().DownloadString($"https://esi.tech.ccp.is/latest/markets/10000002/types/?page={currentTypePage.ToString()}");
-                    fetchedTypeIds = Newtonsoft.Json.JsonConvert.DeserializeObject<int[]>(json);
+                    var marketTypeJson = Loader.DownloadStringWithRetry(cli, $"https://esi.tech.ccp.is/latest/markets/10000002/types/?page={currentTypePage.ToString()}");
+                    fetchedTypeIds = Newtonsoft.Json.JsonConvert.DeserializeObject<int[]>(marketTypeJson);
                     allfetchedTypeIds.AddRange(fetchedTypeIds);
                     currentTypePage++;
                 } while (fetchedTypeIds.Length > 0);
@@ -80,6 +91,7 @@ namespace marketscraper.api
                 var marketTypes = UniverseNameResolver.Resolve<MarketType>(allfetchedTypeIds.Distinct());
                 db.MarketTypes.AddRange(marketTypes);
                 db.SaveChanges();
+
             }
         }
 
