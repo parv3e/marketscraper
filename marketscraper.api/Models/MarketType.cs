@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace marketscraper.api
 {
+    [Table("MarketType")]
     public class MarketType
     {
         [Key]
@@ -20,13 +21,6 @@ namespace marketscraper.api
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        [JsonIgnore]
-        public virtual Load Load { get; set; }
-
-        [Required]
-        [ForeignKey("Load")]
-        [JsonProperty(PropertyName = "load_id")]
-        public int LoadId { get; set; }
 
     }
 }

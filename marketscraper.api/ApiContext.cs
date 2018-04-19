@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 
 namespace marketscraper.api
 {
@@ -15,5 +16,8 @@ namespace marketscraper.api
         public DbSet<Load> Loads { get; set; }
         public DbSet<LoadAudit> LoadAudits { get; set; }
         public DbSet<MarketOrder> MarketOrders { get; set; }
+        public DbSet<MarketType> MarketTypes { get; set; }
     }
+
+
 }

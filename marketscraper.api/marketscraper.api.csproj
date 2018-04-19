@@ -140,9 +140,11 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ConfigurationController.cs" />
     <Compile Include="Controllers\LoadAuditController.cs" />
     <Compile Include="Controllers\LoadController.cs" />
     <Compile Include="Controllers\MarketOrderController.cs" />
+    <Compile Include="Controllers\MarketTypeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

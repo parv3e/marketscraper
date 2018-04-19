@@ -18,19 +18,6 @@ namespace marketscraper.api
 
                 Load load = db.Loads.First(l => l.LoadId == loadId);
 
-
-                int currentTypePage = 1;
-                MarketType[] fetchedTypes = new MarketType[0];
-                do
-                {
-                    var json = new WebClient().DownloadString($"https://esi.tech.ccp.is/latest/markets/10000002/types/?page={currentTypePage.ToString()}");
-                    fetchedTypes = UniverseNameResolver.Resolve<MarketType>(json).ToArray();
-                    load.MarketTypes.AddRange(fetchedTypes);
-                    db.LoadAudits.Add(new LoadAudit() { Load = load, Message = $"Fetched page {currentTypePage} of Market Types." });
-                    db.SaveChanges();
-                    currentTypePage++;
-                } while (fetchedTypes.Length > 0);
-
                 int currentOrderPage = 1;
                 MarketOrder[] fetchedOrders = new MarketOrder[0];
                 do
@@ -49,10 +36,57 @@ namespace marketscraper.api
                 db.SaveChanges();
             }
 
-
         }
 
-        
+        public static void TearDown()
+        {
+            using (var db = new ApiContext())
+            {
+                var objCtx = ((System.Data.Entity.Infrastructure.IObjectContextAdapter)db).ObjectContext;
+                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketOrder]");
+                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [LoadAudit]");
+                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [Load]");
+                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketLocation]");
+                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketSystem]");
+                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketType]");
+            }
+        }
+
+        public static void Setup()
+        {
+            using (var db = new ApiContext())
+            {
+
+                //CLEAR DOWN LOOKUPS
+                var objCtx = ((System.Data.Entity.Infrastructure.IObjectContextAdapter)db).ObjectContext;
+                //objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketLocation]");
+                //objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketSystem]");
+                objCtx.ExecuteStoreCommand("DELETE FROM [MarketType]");
+                int currentTypePage = 1;
+
+                //load market types
+                //cannot guarantee here that ids will be either unique or distinct...
+                List<int> allfetchedTypeIds = new List<int>();
+                int[] fetchedTypeIds = new int[0];
+                do
+                {
+                    System.Diagnostics.Debug.WriteLine($"Fetching market type page: {currentTypePage}");
+                    var json = new WebClient().DownloadString($"https://esi.tech.ccp.is/latest/markets/10000002/types/?page={currentTypePage.ToString()}");
+                    fetchedTypeIds = Newtonsoft.Json.JsonConvert.DeserializeObject<int[]>(json);
+                    allfetchedTypeIds.AddRange(fetchedTypeIds);
+                    currentTypePage++;
+                    if (currentTypePage == 5) { break; }
+                } while (fetchedTypeIds.Length > 0);
+
+                var marketTypes = UniverseNameResolver.Resolve<MarketType>(allfetchedTypeIds.Distinct());
+                db.MarketTypes.AddRange(marketTypes);
+                db.SaveChanges();
+            }
+        }
+
+
+
+
 
     }
 }
