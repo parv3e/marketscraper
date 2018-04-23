@@ -149,12 +149,15 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Loader.cs" />
+    <Compile Include="Models\Constellation.cs" />
     <Compile Include="Models\Load.cs" />
     <Compile Include="Models\LoadAudit.cs" />
     <Compile Include="Models\MarketLocation.cs" />
     <Compile Include="Models\MarketOrder.cs" />
-    <Compile Include="Models\MarketSystem.cs" />
     <Compile Include="Models\MarketType.cs" />
+    <Compile Include="Models\Region.cs" />
+    <Compile Include="Models\SpaceSystem.cs" />
+    <Compile Include="Models\Stations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UniverseNameResolver.cs" />
   </ItemGroup>
