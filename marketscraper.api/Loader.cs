@@ -107,7 +107,7 @@ namespace marketscraper.api
                 }
                 catch (Exception)
                 {
-                    //don't care! LOL
+                    //don't care! can't hear, can't see.
                 }
             }
             throw new ApplicationException("Unable to upload JSON within 10 tries.");
@@ -125,7 +125,7 @@ namespace marketscraper.api
                 }
                 catch (Exception)
                 {
-                    //don't care! LOL
+                    //don't care! can't hear, can't see.
                 }
             }
             throw new ApplicationException("Unable to download JSON within 10 tries.");

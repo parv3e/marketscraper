@@ -6,19 +6,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace marketscraper.api
+namespace marketscraper.api.Models
 {
-    [Table("MarketSystem")]
-    public class MarketSystem
+    public class Stations
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
-        [JsonProperty(PropertyName = "id")]
-        public int MarketSystemId { get; set; }
+        [JsonProperty(PropertyName = "station_id")]
+        public int StationId { get; set; }
 
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
+
+        [JsonProperty(PropertyName = "system_id")]
+        public int SystemId { get; set; }
 
     }
 }
