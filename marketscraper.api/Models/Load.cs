@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace marketscraper.api
 {
-    [Table("Load", Schema = "main")]
+    [Table("Load")]
     public class Load
     {
         [Key]

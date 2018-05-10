@@ -9,11 +9,15 @@ using Newtonsoft.Json;
 
 namespace marketscraper.api
 {
-    [Table("MarketOrder", Schema = "main")]
+    [Table("MarketOrder")]
     public class MarketOrder
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Required]
+        [JsonProperty(PropertyName = "market_order_id")]
+        public int MarketOrderId { get; set; }
+
+
         [Required]
         [JsonProperty(PropertyName = "order_id")]
         public long OrderId { get; set; }

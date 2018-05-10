@@ -8,11 +8,10 @@ using Newtonsoft.Json;
 
 namespace marketscraper.api
 {
-    [Table("MarketOrderHistory", Schema = "main")]
+    [Table("MarketOrderHistory")]
     public class MarketOrderHistory
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
         [JsonProperty(PropertyName = "market_history_id")]
         public int MarketHistoryId { get; set; }

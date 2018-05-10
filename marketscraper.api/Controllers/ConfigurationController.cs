@@ -16,5 +16,12 @@ namespace marketscraper.api.Controllers
         {
             Loader.Setup();
         }
+
+        [HttpPost]
+        [Route("api/configuration/reloadhistory")]
+        public void ReloadHistory()
+        {
+            Loader.LoadMaketOrderHistory();
+        }
     }
 }

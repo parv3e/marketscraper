@@ -15,10 +15,11 @@ namespace marketscraper.api
             using (var db = new ApiContext())
             {
                 var objCtx = ((System.Data.Entity.Infrastructure.IObjectContextAdapter)db).ObjectContext;
-                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketOrder]");
-                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [LoadAudit]");
-                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [Load]");
-                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketType]");
+                objCtx.ExecuteStoreCommand("DELETE FROM [MarketOrderHistory]");
+                objCtx.ExecuteStoreCommand("DELETE FROM [MarketOrder]");
+                objCtx.ExecuteStoreCommand("DELETE FROM [LoadAudit]");
+                objCtx.ExecuteStoreCommand("DELETE FROM [Load]");
+                objCtx.ExecuteStoreCommand("DELETE FROM [MarketType]");
             }
         }
 
@@ -27,9 +28,9 @@ namespace marketscraper.api
             using (var db = new ApiContext())
             {
 
-                //CLEAR DOWN LOOKUPS
-                var objCtx = ((System.Data.Entity.Infrastructure.IObjectContextAdapter)db).ObjectContext;
-                objCtx.ExecuteStoreCommand("DELETE FROM [MarketType]");
+                //TEAR DOWN
+                TearDown();
+
                 int currentTypePage = 1;
 
                 //create new web client
@@ -91,14 +92,30 @@ namespace marketscraper.api
             {
 
                 var objCtx = ((System.Data.Entity.Infrastructure.IObjectContextAdapter)db).ObjectContext;
-                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketOrder]");
+                objCtx.ExecuteStoreCommand("TRUNCATE TABLE [MarketOrderHistory]");
 
-                var marketTypeIds = db.MarketTypes.Select(mt => mt.MarketTypeId);
+                var marketTypeIds = db.MarketTypes.Select(mt => mt.MarketTypeId).ToArray();
                 foreach (var marketTypeId in marketTypeIds)
                 {
-                    var json = Loader.DownloadStringWithRetry(cli, $"https://esi.tech.ccp.is/latest/markets/10000002/history/?type_id={marketTypeId}");
-                    var history = Newtonsoft.Json.JsonConvert.DeserializeObject<MarketOrderHistory[]>(json);
-                    db.MarketOrderHistories.AddRange(history);
+                    System.Diagnostics.Debug.WriteLine($"Loading market order history for type: {marketTypeId.ToString()}");
+                    try
+                    {
+                        var json = Loader.DownloadStringWithRetry(cli, $"https://esi.tech.ccp.is/latest/markets/10000002/history/?type_id={marketTypeId}");
+                        var history = Newtonsoft.Json.JsonConvert.DeserializeObject<MarketOrderHistory[]>(json).ToList();
+
+                        //Trim histories to last 7 days
+                        history = history.Where(h => h.DateFor > DateTime.Now.AddDays(-7)).ToList();
+                        //Stamp marketTypeId
+                        history.ForEach(h => h.MarketTypeId = marketTypeId);
+                        //Save
+                        db.MarketOrderHistories.AddRange(history);
+                        db.SaveChanges();
+                    }
+                    catch (Exception)
+                    {
+
+                        System.Diagnostics.Debug.WriteLine($"Unable to fetch order history for type: {marketTypeId.ToString()}");
+                    }
                 }
             }
         }
