@@ -1,5 +1,3 @@
---DROP FUNCTION dbo.GetStatistics;
-
 CREATE FUNCTION dbo.GetStatistics
 	(
 		@loadId AS int,
